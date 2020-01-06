@@ -10,6 +10,7 @@ const (
 	From
 	Equals
 	Asterisk
+	Comma
 )
 
 func (t TokenType) String() string {
@@ -28,6 +29,8 @@ func (t TokenType) String() string {
 		return "Equals"
 	case Asterisk:
 		return "Asterisk"
+	case Comma:
+		return "Comma"
 	default:
 		return "Unknown"
 	}

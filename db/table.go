@@ -39,17 +39,28 @@ func (t *Table) GetAll() []map[string]string {
 }
 
 func (t *Table) GetColumn(s string) []map[string]string {
-	var rows []map[string]string
-	idx := 0
-	for i := range t.Rows {
-		rows = append(rows, map[string]string{})
-		for j := range t.Schema {
-			if strings.ToUpper(t.Schema[j].Name) != strings.ToUpper(s) { // very not optimized, as is most of the code atm
-				continue
-			}
-			rows[idx][t.Schema[j].Name] = t.Rows[i].GetValue(t.Schema[j].ColumnType, j)
+	// pre-check to see if the column even columnIndex in the schema
+	columnIndex := -1
+	for j := range t.Schema {
+		if strings.ToUpper(t.Schema[j].Name) == strings.ToUpper(s) {
+			columnIndex = j
 		}
-		idx++
+	}
+	if columnIndex == -1 {
+		return nil
+	}
+	columnName := t.Schema[columnIndex].Name
+	columnType := t.Schema[columnIndex].ColumnType
+
+	var rows []map[string]string
+	for i := range t.Rows {
+		row := map[string]string{}
+		row[columnName] = t.Rows[i].GetValue(columnType, j)
+		rows = append(rows, row)
 	}
 	return rows
+}
+
+func (t *Table) GetMultipleColumns(columns []string) []map[string]string {
+	return nil
 }

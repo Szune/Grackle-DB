@@ -107,7 +107,11 @@ func main() {
 			fmt.Printf("Input: %v\n", text)
 			fmt.Printf("Executing query...\n")
 			tokens := ql.GetTokens(text)
-			rows := ql.Interpret(tokens, database)
+			rows, err := ql.ExecuteQuery(tokens, database)
+			if err != nil {
+				fmt.Printf("[Error] query failed: %v\n", text)
+				continue
+			}
 			fmt.Printf("Returned %v rows:\n", len(rows))
 			serialized, err := json.MarshalIndent(rows, "", "\t")
 			if err == nil {

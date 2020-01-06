@@ -31,6 +31,8 @@ func GetTokens(query string) []Token {
 		switch r {
 		case ' ':
 			break
+		case ',':
+			tokens = append(tokens, Token{Type:Comma})
 		case '*':
 			tokens = append(tokens, Token{Type:Asterisk})
 		case '=':
