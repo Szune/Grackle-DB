@@ -17,10 +17,12 @@ func main() {
 		Name: "DaysOfWeek",
 		Schema: []db.Column{
 			{
+				Index: 0,
 				Name:       "Number",
 				ColumnType: db.Int32,
 			},
 			{
+				Index: 1,
 				Name:       "Name",
 				ColumnType: db.String,
 			},
@@ -33,11 +35,18 @@ func main() {
 		Name: "Months",
 		Schema: []db.Column{
 			{
+				Index: 0,
 				Name: "Number",
 				ColumnType: db.Int32,
 			},
 			{
+				Index: 1,
 				Name: "Name",
+				ColumnType: db.String,
+			},
+			{
+				Index: 2,
+				Name: "Season",
 				ColumnType: db.String,
 			},
 		},
@@ -76,12 +85,21 @@ func main() {
 		Values:[][]byte{
 			db.Int32ToBytes(1),
 			db.StrToBytes("January"),
+			db.StrToBytes("Winter"),
 		},
 	})
 	table2.Insert(&db.Row{
 		Values:[][]byte{
 			db.Int32ToBytes(2),
 			db.StrToBytes("February"),
+			db.StrToBytes("Winter"),
+		},
+	})
+	table2.Insert(&db.Row{
+		Values:[][]byte{
+			db.Int32ToBytes(2),
+			db.StrToBytes("March"),
+			db.StrToBytes("Spring"),
 		},
 	})
 

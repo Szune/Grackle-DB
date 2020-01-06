@@ -1,5 +1,9 @@
 package querying
-import "../db"
+
+import (
+	"../db"
+	"strings"
+)
 
 func executeSelect(tokens []Token, database *db.Database) []map[string]string {
 	if len(tokens) < 4 { // [1]select [2]* [3]from [4]<table>
@@ -14,15 +18,15 @@ func executeSelect(tokens []Token, database *db.Database) []map[string]string {
 	tPos++
 	if tokens[tPos].Type == Comma {
 		// get multiple columns, e.g. select x, y from z
-		multiColumns := make([]string, 4) // arbitrary
-		multiColumns = append(multiColumns, column.String)
+		multiColumns := map[string]struct{}{} // closest to a set afaik
+		multiColumns[strings.ToUpper(column.String)] = struct{}{}
 		for tokens[tPos].Type == Comma {
 			tPos++
 
 			if tokens[tPos].Type != Identifier {
 				return nil
 			}
-			multiColumns = append(multiColumns, tokens[tPos].String)
+			multiColumns[strings.ToUpper(tokens[tPos].String)] = struct{}{}
 			tPos++
 		}
 		table := GetTable(tokens, database, tPos)

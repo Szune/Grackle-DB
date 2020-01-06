@@ -62,6 +62,25 @@ func (t *Table) GetColumn(s string) []map[string]string {
 	return rows
 }
 
-func (t *Table) GetMultipleColumns(columns []string) []map[string]string {
-	return nil
+func (t *Table) GetMultipleColumns(columns map[string]struct{}) []map[string]string {
+	// pre-check to see if the column even cols in the schema
+	var cols []Column
+	for i := range t.Schema {
+		if _, ok := columns[strings.ToUpper(t.Schema[i].Name)]; ok {
+			cols = append(cols, t.Schema[i])
+		}
+	}
+	if len(cols) < 1 {
+		return nil
+	}
+
+	var rows []map[string]string
+	for i := range t.Rows {
+		row := map[string]string{}
+		for j := range cols {
+			row[cols[j].Name] = t.Rows[i].GetValue(cols[j].ColumnType, cols[j].Index)
+		}
+		rows = append(rows, row)
+	}
+	return rows
 }

@@ -7,6 +7,7 @@ Supports:
 * Queries
   * select * from &lt;table&gt;
   * select &lt;column&gt; from &lt;table&gt;
+  * select &lt;column1&gt;, &lt;column2&gt; from &lt;table&gt;
 
 Lacks:
 * Persistent storage
