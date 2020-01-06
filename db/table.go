@@ -39,7 +39,7 @@ func (t *Table) GetAll() []map[string]string {
 }
 
 func (t *Table) GetColumn(s string) []map[string]string {
-	// pre-check to see if the column even columnIndex in the schema
+	// pre-check to see if the column even exists in the schema
 	columnIndex := -1
 	for j := range t.Schema {
 		if strings.ToUpper(t.Schema[j].Name) == strings.ToUpper(s) {
@@ -63,7 +63,7 @@ func (t *Table) GetColumn(s string) []map[string]string {
 }
 
 func (t *Table) GetMultipleColumns(columns map[string]struct{}) []map[string]string {
-	// pre-check to see if the column even cols in the schema
+	// pre-check to see if the column even exists in the schema
 	var cols []Column
 	for i := range t.Schema {
 		if _, ok := columns[strings.ToUpper(t.Schema[i].Name)]; ok {
