@@ -54,8 +54,9 @@ func (t *Table) GetColumn(s string) []map[string]string {
 
 	var rows []map[string]string
 	for i := range t.Rows {
-		row := map[string]string{}
-		row[columnName] = t.Rows[i].GetValue(columnType, j)
+		row := map[string]string{
+			columnName: t.Rows[i].GetValue(columnType, columnIndex),
+		}
 		rows = append(rows, row)
 	}
 	return rows
