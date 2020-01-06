@@ -5,9 +5,9 @@ It is extremely unlikely to be a wise choice for a database.
 
 #### Supports:
 * Queries
-  * select * from &lt;table&gt;
-  * select &lt;column&gt; from &lt;table&gt;
-  * select &lt;column1&gt;, &lt;column2&gt; from &lt;table&gt;
+  * select * from z
+  * select x from z
+  * select x, y from z
 
 #### Lacks:
 * Persistent storage
