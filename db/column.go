@@ -9,7 +9,7 @@ const (
 )
 
 type Column struct {
-	Index int
+	Index      int
 	Name       string
 	ColumnType ColumnType
 }

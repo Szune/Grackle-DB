@@ -1,15 +1,17 @@
 package main
 
 import (
-	"./db"
-	ql "./querying"
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"grackle/db"
+	ql "grackle/querying"
+	"grackle/utils"
 	"os"
 )
 
 func main() {
+	// TODO: select top(10), e.g. add top parameter to select instructions
 	fmt.Printf(".--------------------.\n")
 	fmt.Printf("|     Grackle DB     |\n")
 	fmt.Printf("'--------------------'\n")
@@ -17,12 +19,12 @@ func main() {
 		Name: "DaysOfWeek",
 		Schema: []db.Column{
 			{
-				Index: 0,
+				Index:      0,
 				Name:       "Number",
 				ColumnType: db.Int32,
 			},
 			{
-				Index: 1,
+				Index:      1,
 				Name:       "Name",
 				ColumnType: db.String,
 			},
@@ -35,22 +37,22 @@ func main() {
 		Name: "Months",
 		Schema: []db.Column{
 			{
-				Index: 0,
-				Name: "Number",
+				Index:      0,
+				Name:       "Number",
 				ColumnType: db.Int32,
 			},
 			{
-				Index: 1,
-				Name: "Name",
+				Index:      1,
+				Name:       "Name",
 				ColumnType: db.String,
 			},
 			{
-				Index: 2,
-				Name: "Season",
+				Index:      2,
+				Name:       "Season",
 				ColumnType: db.String,
 			},
 		},
-		Rows: []db.Row{},
+		Rows:      []db.Row{},
 		LastRowId: 0,
 	}
 
@@ -64,55 +66,55 @@ func main() {
 
 	table.Insert(&db.Row{
 		Values: [][]byte{
-			db.Int32ToBytes(1),
-			db.StrToBytes("Monday"),
+			utils.Int32ToBytes(1),
+			utils.StrToBytes("Monday"),
 		},
 	})
 	table.Insert(&db.Row{
 		Values: [][]byte{
-			db.Int32ToBytes(2),
-			db.StrToBytes("Tuesday"),
+			utils.Int32ToBytes(2),
+			utils.StrToBytes("Tuesday"),
 		},
 	})
 	table.Insert(&db.Row{
 		Values: [][]byte{
-			db.Int32ToBytes(3),
-			db.StrToBytes("Wednesday"),
+			utils.Int32ToBytes(3),
+			utils.StrToBytes("Wednesday"),
 		},
 	})
 
 	table2.Insert(&db.Row{
-		Values:[][]byte{
-			db.Int32ToBytes(1),
-			db.StrToBytes("January"),
-			db.StrToBytes("Winter"),
+		Values: [][]byte{
+			utils.Int32ToBytes(1),
+			utils.StrToBytes("January"),
+			utils.StrToBytes("Winter"),
 		},
 	})
 	table2.Insert(&db.Row{
-		Values:[][]byte{
-			db.Int32ToBytes(2),
-			db.StrToBytes("February"),
-			db.StrToBytes("Winter"),
+		Values: [][]byte{
+			utils.Int32ToBytes(2),
+			utils.StrToBytes("February"),
+			utils.StrToBytes("Winter"),
 		},
 	})
 	table2.Insert(&db.Row{
-		Values:[][]byte{
-			db.Int32ToBytes(2),
-			db.StrToBytes("March"),
-			db.StrToBytes("Spring"),
+		Values: [][]byte{
+			utils.Int32ToBytes(3),
+			utils.StrToBytes("March"),
+			utils.StrToBytes("Spring"),
 		},
 	})
 
-	db.PrintDb(database)
+	db.Print(database)
 
 	table.Update(2, &db.Row{
 		Values: [][]byte{
-			db.Int32ToBytes(10),
-			db.StrToBytes("Scrambleday"),
+			utils.Int32ToBytes(10),
+			utils.StrToBytes("Scrambleday"),
 		},
 	})
 
-	db.PrintDb(database)
+	db.Print(database)
 
 	fmt.Printf("Waiting for command...\n")
 	fmt.Printf("Enter query (quit with q):\n")
@@ -124,23 +126,16 @@ func main() {
 		} else {
 			fmt.Printf("Input: %v\n", text)
 			fmt.Printf("Executing query...\n")
-			tokens := ql.GetTokens(text)
-			rows, err := ql.ExecuteQuery(tokens, database)
+			resultSets, err := ql.ExecuteQuery(text, database)
 			if err != nil {
 				fmt.Printf("[Error] query failed: %v\n", text)
 				continue
 			}
-			fmt.Printf("Returned %v rows:\n", len(rows))
-			serialized, err := json.MarshalIndent(rows, "", "\t")
+			fmt.Printf("Returned %v result sets:\n", len(resultSets))
+			serialized, err := json.MarshalIndent(resultSets, "", "\t")
 			if err == nil {
 				fmt.Println(string(serialized))
 			}
-			/*for i := range rows {
-				fmt.Printf("Row %v\n", i)
-				for k, v := range rows[i] {
-					fmt.Printf("\t%v: %v\n", k, v)
-				}
-			}*/
 		}
 	}
 
@@ -150,4 +145,3 @@ func main() {
 
 	fmt.Printf("Grackle DB exited")
 }
-
