@@ -76,20 +76,27 @@ func stringListToSet(columns []string) (set map[string]struct{}) {
 func executeInstructions(instructions []InstructionAndTable) (rows []utils.ResultSet, err error) {
 	for i := range instructions {
 		instr := instructions[i]
+		// TODO: clean this up
 		switch instr.Instruction.Op {
 		case utils.SelectOp:
-			if instr.Instruction.SelectColumns[0] == "*" {
+			if instr.Instruction.SelectOrInsertColumns[0] == "*" {
 				rows = append(rows, instr.Table.GetAll())
 			} else {
-				rows = append(rows, instr.Table.GetMultipleColumns(stringListToSet(instr.Instruction.SelectColumns)))
+				rows = append(rows, instr.Table.GetMultipleColumns(stringListToSet(instr.Instruction.SelectOrInsertColumns)))
 			}
 			break
 		case utils.SelectWhereOp:
-			if instr.Instruction.SelectColumns[0] == "*" {
+			if instr.Instruction.SelectOrInsertColumns[0] == "*" {
 				rows = append(rows, instr.Table.GetAllWhere(instr.Instruction.Filters))
 			} else {
-				rows = append(rows, instr.Table.GetMultipleColumnsWhere(instr.Instruction.Filters, stringListToSet(instr.Instruction.SelectColumns)))
+				rows = append(rows, instr.Table.GetMultipleColumnsWhere(instr.Instruction.Filters, stringListToSet(instr.Instruction.SelectOrInsertColumns)))
 			}
+			break
+		case utils.InsertOp:
+			// TODO: add validation by checking against the schema
+			instr.Table.Insert(&db.Row{
+				Values: instr.Instruction.InsertValues,
+			})
 			break
 		}
 	}

@@ -11,9 +11,12 @@ import (
 )
 
 func main() {
+	// TODO: add update query
+	// TODO: add delete query
 	// TODO: select top(10), e.g. add top parameter to select instructions
+	// TODO: io -> handle writing to files on a separate thread or goroutine than the query engine
 	fmt.Printf(".--------------------.\n")
-	fmt.Printf("|     Grackle DB     |\n")
+	fmt.Printf("|     GrackleDB      |\n")
 	fmt.Printf("'--------------------'\n")
 	table := &db.Table{
 		Name: "DaysOfWeek",
@@ -105,14 +108,16 @@ func main() {
 		},
 	})
 
-	db.Print(database)
+	/*
+		db.Print(database)
 
-	table.Update(2, &db.Row{
-		Values: [][]byte{
-			utils.Int32ToBytes(10),
-			utils.StrToBytes("Scrambleday"),
-		},
-	})
+		table.Update(2, &db.Row{
+			Values: [][]byte{
+				utils.Int32ToBytes(10),
+				utils.StrToBytes("Scrambleday"),
+			},
+		})
+	*/
 
 	db.Print(database)
 
@@ -128,13 +133,17 @@ func main() {
 			fmt.Printf("Executing query...\n")
 			resultSets, err := ql.ExecuteQuery(text, database)
 			if err != nil {
-				fmt.Printf("[Error] query failed: %v\n", text)
+				fmt.Printf("[Error] query failed:\n\"%v\"\nError message: %s\n", text, err)
 				continue
 			}
-			fmt.Printf("Returned %v result sets:\n", len(resultSets))
-			serialized, err := json.MarshalIndent(resultSets, "", "\t")
-			if err == nil {
-				fmt.Println(string(serialized))
+			if len(resultSets) > 0 {
+				fmt.Printf("Returned %v result sets:\n", len(resultSets))
+				serialized, err := json.MarshalIndent(resultSets, "", "\t")
+				if err == nil {
+					fmt.Println(string(serialized))
+				}
+			} else {
+				fmt.Printf("Returned 0 result sets.\n")
 			}
 		}
 	}
@@ -143,5 +152,5 @@ func main() {
 		fmt.Printf("Error: %v\n", err)
 	}
 
-	fmt.Printf("Grackle DB exited")
+	fmt.Printf("GrackleDB exited")
 }

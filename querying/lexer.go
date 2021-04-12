@@ -20,6 +20,10 @@ func GetTokens(query string) ([]Token, error) {
 		"SELECT": Select,
 		"WHERE":  Where,
 		"FROM":   From,
+		"INSERT": Insert,
+		"INTO":   Into,
+		"VALUES": Values,
+		"DELETE": Delete,
 	}
 	state := &lexerState{
 		buf: [2]rune{' ', ' '},
@@ -35,8 +39,17 @@ func GetTokens(query string) ([]Token, error) {
 		switch r {
 		case ' ':
 			break
+		case '@':
+			consumeRune(state, runes)
+			ident := getIdentifier(r, state, runes)
+			tokens = append(tokens, Token{Type: Parameter, String: ident})
+			break
 		case ',':
 			tokens = append(tokens, Token{Type: Comma})
+		case '(':
+			tokens = append(tokens, Token{Type: LeftParenthesis})
+		case ')':
+			tokens = append(tokens, Token{Type: RightParenthesis})
 		case '|':
 			tokens = append(tokens, Token{Type: Pipe})
 		case '*':
@@ -62,7 +75,7 @@ func GetTokens(query string) ([]Token, error) {
 					tokens = append(tokens, Token{Type: Identifier, String: ident})
 				}
 			} else {
-				return nil, fmt.Errorf("failed to tokenize query")
+				return nil, fmt.Errorf("failed to tokenize query, unknown token: %c", r)
 			}
 		}
 	}

@@ -12,6 +12,12 @@ func Int32ToBytes(num int32) []byte {
 	return bytes
 }
 
+func Int64ToBytes(num int64) []byte {
+	bytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(bytes, uint64(num))
+	return bytes
+}
+
 func StrToBytes(str string) []byte {
 	return []byte(str)
 }

@@ -6,6 +6,12 @@ const (
 	Identifier TokenType = iota
 	Select
 	Where
+	Insert
+	Into
+	Values
+	Update
+	Delete
+	Parameter
 	String
 	Number
 	From
@@ -13,6 +19,8 @@ const (
 	Asterisk
 	Comma
 	Pipe
+	LeftParenthesis
+	RightParenthesis
 )
 
 func (t TokenType) String() string {
@@ -23,6 +31,18 @@ func (t TokenType) String() string {
 		return "Select"
 	case Where:
 		return "Where"
+	case Insert:
+		return "Insert"
+	case Into:
+		return "Into"
+	case Values:
+		return "Values"
+	case Update:
+		return "Update"
+	case Delete:
+		return "Delete"
+	case Parameter:
+		return "Parameter"
 	case String:
 		return "String"
 	case Number:
@@ -37,6 +57,10 @@ func (t TokenType) String() string {
 		return "Comma"
 	case Pipe:
 		return "Pipe"
+	case LeftParenthesis:
+		return "LeftParenthesis"
+	case RightParenthesis:
+		return "RightParenthesis"
 	default:
 		return "Unknown"
 	}

@@ -5,6 +5,11 @@ type Operation int8
 const (
 	SelectOp Operation = iota
 	SelectWhereOp
+	DeleteOp
+	DeleteWhereOp
+	InsertOp
+	UpdateOp
+	UpdateWhereOp
 )
 
 type Filter struct {
@@ -14,8 +19,9 @@ type Filter struct {
 }
 
 type Instruction struct {
-	Op            Operation
-	Table         string
-	SelectColumns []string
-	Filters       []Filter
+	Op                    Operation
+	Table                 string
+	SelectOrInsertColumns []string
+	Filters               []Filter
+	InsertValues          [][]byte
 }
