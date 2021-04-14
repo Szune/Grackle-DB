@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"grackle/db"
 	ql "grackle/querying"
+	"grackle/types"
 	"grackle/utils"
 	"os"
 )
@@ -15,6 +16,7 @@ func main() {
 	// TODO: add delete query
 	// TODO: select top(10), e.g. add top parameter to select instructions
 	// TODO: io -> handle writing to files on a separate thread or goroutine than the query engine
+	// TODO: net -> handle HTTP and other network requests
 	fmt.Printf(".--------------------.\n")
 	fmt.Printf("|     GrackleDB      |\n")
 	fmt.Printf("'--------------------'\n")
@@ -24,12 +26,12 @@ func main() {
 			{
 				Index:      0,
 				Name:       "Number",
-				ColumnType: db.Int32,
+				ColumnType: types.Int32,
 			},
 			{
 				Index:      1,
 				Name:       "Name",
-				ColumnType: db.String,
+				ColumnType: types.String,
 			},
 		},
 		Rows:      []db.Row{},
@@ -42,17 +44,17 @@ func main() {
 			{
 				Index:      0,
 				Name:       "Number",
-				ColumnType: db.Int32,
+				ColumnType: types.Int32,
 			},
 			{
 				Index:      1,
 				Name:       "Name",
-				ColumnType: db.String,
+				ColumnType: types.String,
 			},
 			{
 				Index:      2,
 				Name:       "Season",
-				ColumnType: db.String,
+				ColumnType: types.String,
 			},
 		},
 		Rows:      []db.Row{},

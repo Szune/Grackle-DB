@@ -2,6 +2,7 @@ package querying
 
 import (
 	"fmt"
+	"grackle/types"
 	"grackle/utils"
 	"strings"
 )
@@ -177,18 +178,18 @@ func parseInsert(s *parserState) (*utils.Instruction, error) {
 	s.eat()
 
 	// parse values
-	values := make([][]byte, 0, 2)
+	values := make([]utils.QueryValue, 0, 2)
 
 	value := s.buf[0]
 	switch value.Type {
 	case String:
-		values = append(values, utils.StrToBytes(value.String))
+		values = append(values, utils.QueryValue{Value: utils.StrToBytes(value.String), Type: types.String})
 		break
 	case Number:
-		values = append(values, utils.Int64ToBytes(value.Number))
+		values = append(values, utils.QueryValue{Value: utils.Int64ToBytes(value.Number), Type: types.Int64})
 		break
 	case Parameter:
-		values = append(values, utils.StrToBytes("@"+value.String))
+		values = append(values, utils.QueryValue{Value: utils.StrToBytes("@" + value.String)})
 		break
 	default:
 		return nil, fmt.Errorf("failed to parse insert: expected value after 'insert into tablename([...]) values('")
@@ -197,16 +198,16 @@ func parseInsert(s *parserState) (*utils.Instruction, error) {
 
 	for s.buf[0].Type == Comma {
 		s.eat()
-		value := s.buf[0]
+		value = s.buf[0]
 		switch value.Type {
 		case String:
-			values = append(values, utils.StrToBytes(value.String))
+			values = append(values, utils.QueryValue{Value: utils.StrToBytes(value.String), Type: types.String})
 			break
 		case Number:
-			values = append(values, utils.Int64ToBytes(value.Number))
+			values = append(values, utils.QueryValue{Value: utils.Int64ToBytes(value.Number), Type: types.Int64})
 			break
 		case Parameter:
-			values = append(values, utils.StrToBytes("@"+value.String))
+			values = append(values, utils.QueryValue{Value: utils.StrToBytes("@" + value.String)})
 			break
 		default:
 			return nil, fmt.Errorf("failed to parse insert: expected value after 'insert into tablename([...]) values('")

@@ -1,5 +1,9 @@
 package utils
 
+import (
+	"grackle/types"
+)
+
 type Operation int8
 
 const (
@@ -18,10 +22,15 @@ type Filter struct {
 	Value  []byte
 }
 
+type QueryValue struct {
+	Value []byte
+	Type  types.ColumnType
+}
+
 type Instruction struct {
 	Op                    Operation
 	Table                 string
 	SelectOrInsertColumns []string
 	Filters               []Filter
-	InsertValues          [][]byte
+	InsertValues          []QueryValue
 }

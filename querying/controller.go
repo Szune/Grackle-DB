@@ -3,7 +3,9 @@ package querying
 import (
 	"fmt"
 	"grackle/db"
+	"grackle/types"
 	"grackle/utils"
+	"math"
 	"strings"
 )
 
@@ -93,12 +95,50 @@ func executeInstructions(instructions []InstructionAndTable) (rows []utils.Resul
 			}
 			break
 		case utils.InsertOp:
-			// TODO: add validation by checking against the schema
+			if len(instr.Instruction.InsertValues) != len(instr.Instruction.SelectOrInsertColumns) {
+				return nil, fmt.Errorf("different amount of columns compared to values on insert command: %v, %v", len(instr.Instruction.SelectOrInsertColumns), len(instr.Instruction.InsertValues))
+			}
+			values := make([][]byte, len(instr.Table.Schema))
+			for i1, v1 := range instr.Instruction.SelectOrInsertColumns {
+				set := false
+				for i2, v2 := range instr.Table.Schema {
+					if strings.EqualFold(v2.Name, v1) {
+						converted, err := convertTypes(instr.Instruction.InsertValues[i1].Value, v2.Name, instr.Instruction.InsertValues[i1].Type, v2.ColumnType)
+						if err != nil {
+							return nil, err
+						} else {
+							values[i2] = converted
+							set = true
+						}
+					}
+				}
+				if !set {
+					return nil, fmt.Errorf("column '%s' does not exist in table '%s'", v1, instr.Table.Name)
+				}
+			}
+
 			instr.Table.Insert(&db.Row{
-				Values: instr.Instruction.InsertValues,
+				Values: values,
 			})
 			break
 		}
 	}
 	return rows, nil
+}
+
+func convertTypes(value []byte, columnName string, from types.ColumnType, to types.ColumnType) ([]byte, error) {
+	if from == to {
+		return value, nil
+	}
+	if from == types.Int32 && to == types.Int64 {
+		before := utils.BytesToInt32(value)
+		return utils.Int64ToBytes(int64(before)), nil
+	} else if from == types.Int64 && to == types.Int32 {
+		before := utils.BytesToInt64(value)
+		if before > math.MaxInt32 || before < math.MinInt32 {
+			return nil, fmt.Errorf("value out of range on insert, column '%s' expected type '%s', received '%s' (%v)", columnName, to.String(), from.String(), before)
+		}
+		return utils.Int32ToBytes(int32(before)), nil
+	}
+	return nil, fmt.Errorf("wrong type on insert, column '%s' expected type '%s', received '%s'", columnName, to.String(), from.String())
 }

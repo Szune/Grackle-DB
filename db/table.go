@@ -1,6 +1,7 @@
 package db
 
 import (
+	"grackle/types"
 	"grackle/utils"
 	"strings"
 )
@@ -8,7 +9,7 @@ import (
 type Table struct {
 	Rows      []Row
 	Name      string
-	Schema    []Column
+	Schema    []Column // warning: bottleneck with lots of columns
 	LastRowId int64
 }
 
@@ -49,7 +50,6 @@ func (t *Table) GetAll() []map[string]string {
 	}
 	return rows
 }
-
 
 func (t *Table) GetColumn(s string) []map[string]string {
 	// pre-check to see if the column even exists in the schema
@@ -151,7 +151,7 @@ func rowCriterionMet(t *Table, row Row, filter utils.Filter) bool {
 		return false
 	}
 
-	if t.Schema[columnIndex].ColumnType == String {
+	if t.Schema[columnIndex].ColumnType == types.String {
 		return strings.EqualFold(utils.BytesToStr(rowValue), utils.BytesToStr(filter.Value)) == filter.Equals
 	}
 
